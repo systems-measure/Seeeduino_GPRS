@@ -31,7 +31,7 @@
 #ifndef __GPRS_H__
 #define __GPRS_H__
 
-#include "sim800.h"
+#include "gsmTerminal.h"
 
 enum Protocol {
     CLOSED = 0,
@@ -53,7 +53,7 @@ public:
     /** Create GPRS instance
      *  @param number default phone number during mobile communication
      */
-    GPRS(int baudRate = 9600):SIM800(baudRate){};
+    GPRS(int port, int baudRate = 9600):SIM800(port, baudRate){};
 
     /** initialize GPRS module including SIM card check & signal strength
      *  @returns

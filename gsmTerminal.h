@@ -31,28 +31,15 @@
 #ifndef __SIM800_H__
 #define __SIM800_H__
 
-#include "Arduino.h"
-#include <SoftwareSerial.h>
+#include "SerialGate.h"
+#include <future>
 
 #define TRUE                    1
 #define FALSE                   0
 
-#define SIM800_TX_PIN           8
-#define SIM800_RX_PIN           7
-#define SIM800_POWER_PIN        9
-#define SIM800_POWER_STATUS     12
+#define DEFAULT_TIMEOUT		10
 
-#define UART_DEBUG
-
-#ifdef UART_DEBUG
-#define ERROR(x)            Serial.println(x)
-#define DEBUG(x)            Serial.println(x);
-#else
-#define ERROR(x)
-#define DEBUG(x)
-#endif
-
-#define DEFAULT_TIMEOUT     5
+#define GSM_RESP_DEFAULT_TIMEOUT     10
 
 /** SIM800 class.
  *  Used for SIM800 communication. attention that SIM800 module communicate with MCU in serial protocol
@@ -61,24 +48,12 @@ class SIM800
 {
 
 public:
-    /** Create SIM800 Instance 
-     *  @param tx   uart transmit pin to communicate with SIM800
-     *  @param rx   uart receive pin to communicate with SIM800
-     *  @param baudRate baud rate of uart communication
-     */
-    SIM800(int baudRate):serialSIM800(SIM800_TX_PIN,SIM800_RX_PIN){
-        powerPin = SIM800_POWER_PIN;
-        pinMode(powerPin,OUTPUT);
-        serialSIM800.begin(baudRate);
-    };
+	
+	SIM800(int portNum, int baudRate);
+	inline ~SIM800()  { /*com_port.Close();*/ }
     
-    /** Power on SIM800
-     */
-    void preInit(void);
-    
-    /** Check if SIM800 readable
-     */
-    int checkReadable(void);
+  
+  
     
     /** read from SIM800 module and save to buffer array
      *  @param  buffer  buffer array to save what read from SIM800 module
@@ -88,27 +63,26 @@ public:
      *      0 on success
      *      -1 on error
      */
-    int readBuffer(char* buffer,int count, unsigned int timeOut = DEFAULT_TIMEOUT);
-
+	int32_t Receive(uint32_t timeout);
     
     /** clean Buffer
      *  @param buffer   buffer to clean
      *  @param count    number of bytes to clean
      */
-    void cleanBuffer(char* buffer, int count);
+    void cleanBuffer();
     
     /** send AT command to SIM800 module
      *  @param cmd  command array which will be send to GPRS module
      */
-    void sendCmd(const char* cmd);
+    void sendCmd(char* cmd);
 
     /**send "AT" to SIM800 module
      */
-    int sendATTest(void);
+ //   int sendATTest(void);
     
     /**send '0x1A' to SIM800 Module
      */
-    void sendEndMark(void);
+  //  void sendEndMark(void);
     
     /** check SIM800 module response before time out
      *  @param  *resp   correct response which SIM800 module will return
@@ -117,7 +91,7 @@ public:
      *      0 on success
      *      -1 on error
      */ 
-    int waitForResp(const char* resp, unsigned timeout);
+  //  int waitForResp(const char* resp, unsigned timeout);
 
     /** send AT command to GPRS module and wait for correct response
      *  @param  *cmd    AT command which will be send to GPRS module
@@ -127,18 +101,13 @@ public:
      *      0 on success
      *      -1 on error
      */
-    int sendCmdAndWaitForResp(const char* cmd, const char *resp, unsigned timeout);
+    int sendCmdAndWaitForResp( char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1);
+	int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1);
 
+protected:
 
-    /** used for serial debug, you can specify tx and rx pin and then communicate with GPRS module with common AT commands
-     */
-    void serialDebug(void);
-    
-    int powerPin;
-    SoftwareSerial serialSIM800;
-
-private:
-    
+	SerialGate com_port;
+	char buffer[255];
 };
 
 #endif
