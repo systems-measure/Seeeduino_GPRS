@@ -1,113 +1,47 @@
-/*
- * sim800.h
- * A library for SeeedStudio seeeduino GPRS shield 
- *
- * Copyright (c) 2013 seeed technology inc.
- * Author        :   lawliet zou
- * Create Time   :   Dec 2013
- * Change Log    :
- *
- * The MIT License (MIT)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-#ifndef __SIM800_H__
-#define __SIM800_H__
+#pragma once
 
 #include "SerialGate.h"
 #include <future>
 
-#define TRUE                    1
-#define FALSE                   0
 
-#define DEFAULT_TIMEOUT		10
+#define GSM_RESP_DEFAULT_TIMEOUT     10000
 
-#define GSM_RESP_DEFAULT_TIMEOUT     10
-
-/** SIM800 class.
- *  Used for SIM800 communication. attention that SIM800 module communicate with MCU in serial protocol
- */
-class SIM800
+class GSM_Terminal
 {
-
 public:
-	
-	SIM800(int portNum, int baudRate);
-	inline ~SIM800()  { /*com_port.Close();*/ }
-    
-  
-  
-    
-    /** read from SIM800 module and save to buffer array
-     *  @param  buffer  buffer array to save what read from SIM800 module
-     *  @param  count   the maximal bytes number read from SIM800 module
-     *  @param  timeOut time to wait for reading from SIM800 module 
-     *  @returns
-     *      0 on success
-     *      -1 on error
-     */
-	int32_t Receive(uint32_t timeout);
-    
-    /** clean Buffer
-     *  @param buffer   buffer to clean
-     *  @param count    number of bytes to clean
-     */
-    void cleanBuffer();
-    
-    /** send AT command to SIM800 module
-     *  @param cmd  command array which will be send to GPRS module
-     */
-    void sendCmd(char* cmd);
+	GSM_Terminal(int portNum, int baudRate);
+	inline ~GSM_Terminal() {/*com_port.Close();*/ };
 
-    /**send "AT" to SIM800 module
-     */
- //   int sendATTest(void);
-    
-    /**send '0x1A' to SIM800 Module
-     */
-  //  void sendEndMark(void);
-    
-    /** check SIM800 module response before time out
-     *  @param  *resp   correct response which SIM800 module will return
-     *  @param  *timeout    waiting seconds till timeout
-     *  @returns
-     *      0 on success
-     *      -1 on error
-     */ 
-  //  int waitForResp(const char* resp, unsigned timeout);
 
-    /** send AT command to GPRS module and wait for correct response
-     *  @param  *cmd    AT command which will be send to GPRS module
-     *  @param  *resp   correct response which GPRS module will return
-     *  @param  *timeout    waiting seconds till timeout
-     *  @returns
-     *      0 on success
-     *      -1 on error
-     */
-    int sendCmdAndWaitForResp( char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1);
-	int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1);
+	/** send command to  GSM terminal 
+	*  @param cmd command array which will be send to GSM terminal, need '/0' in the end
+	*/
+	void sendCmd(char* cmd);
+
+	/** send command to GSM terminal and wait for correct response
+	*  @param  *cmd    AT command which will be send to GSM terminal
+	*  @param  *resp   correct response which GSM module will return
+	*  @param  *timeout    waiting seconds till timeout
+	*  @returns
+	*      0 on success
+	*      -1 on error
+	*/
+	int sendCmdAndWaitForResp(char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1);
+	int sendCmdAndWaitForResp(char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1);
+
 
 protected:
+	void cleanBuffer();
 
 	SerialGate com_port;
 	char buffer[255];
-};
 
-#endif
+private:
+	/** read from GSM terminal and save to buffer array
+	*  @param  timeout 
+	*  @returns
+	*      0 on success
+	*      -1 on error
+	*/
+	int32_t Receive(uint32_t timeout);
+};

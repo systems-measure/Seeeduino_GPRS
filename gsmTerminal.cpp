@@ -1,44 +1,16 @@
-/*
- * sim800.cpp
- * A library for SeeedStudio seeeduino GPRS shield 
- *
- * Copyright (c) 2013 seeed technology inc.
- * Author        :   lawliet zou
- * Create Time   :   Dec 2013
- * Change Log    :
- *
- * The MIT License (MIT)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 
-#include "GsmTerminal.h"
+
+#include "gsmTerminal.h"
 #include <ctime>
 
-SIM800::SIM800(int portNum, int baudRate)
+GSM_Terminal::GSM_Terminal(int portNum, int baudRate)
 {
 	com_port.Open(portNum, baudRate);
 	com_port.Clean();
 	memset(buffer, '\0', sizeof(buffer));
 };
 
-int32_t SIM800::Receive(uint32_t timeout) {
+int32_t GSM_Terminal::Receive(uint32_t timeout) {
 	 
 		/*std::future<int32_t> f = std::async(std::launch::async, &SerialGate::Recv, com_port_, (char*)rx_buff, count_rx);
 		int32_t count_Rcv = f.get();*/
@@ -73,18 +45,19 @@ int32_t SIM800::Receive(uint32_t timeout) {
 }
 
 
-void SIM800::cleanBuffer()
+void GSM_Terminal::cleanBuffer()
 {
 	memset(buffer, '\0', sizeof(buffer));
 }
 
-void SIM800::sendCmd(char* cmd)
+
+void GSM_Terminal::sendCmd(char* cmd)
 {
 	unsigned int len = strlen(cmd);
 	com_port.Send(cmd, len);
 }
 
-int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp, uint32_t timeout, unsigned tries)
+int GSM_Terminal::sendCmdAndWaitForResp(char * cmd, const char * resp, unsigned timeout, uint32_t tries)
 {
 	unsigned tries_counter = 0;
 	while (tries_counter < tries)
@@ -102,7 +75,7 @@ int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp, uint32_t timeout,
 	}
 	return -1;
 }
-int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char *resp2, uint32_t timeout, unsigned tries)
+int GSM_Terminal::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char *resp2, uint32_t timeout, unsigned tries)
 {
 	unsigned tries_counter = 0;
 	while (tries_counter < tries)
@@ -122,14 +95,14 @@ int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char *resp2
 	}
 	return -1;
 }
-//int SIM800::sendATTest(void)
+//int GSM_Terminal::sendATTest(void)
 //{
 //    //int ret = sendCmdAndWaitForResp("AT\r\n","OK", DEFAULT_TIMEOUT);
 //    //return ret;
 //	return 0;
 //}
 
-//int SIM800::waitForResp(const char *resp, unsigned int timeout)
+//int GSM_Terminal::waitForResp(const char *resp, unsigned int timeout)
 //{
 //
 //	//clock_t start_rcv = clock();
@@ -148,9 +121,9 @@ int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char *resp2
 //
 //    /*while(1) 
 //	{
-//        if(serialSIM800.available()) 
+//        if(serialGSM_Terminal.available()) 
 //		{
-//            char c = serialSIM800.read();
+//            char c = serialGSM_Terminal.read();
 //            sum = (c==resp[sum]) ? sum+1 : 0;
 //            if(sum == len)break;
 //        }
@@ -161,17 +134,17 @@ int SIM800::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char *resp2
 //        }
 //    }
 //
-//    while(serialSIM800.available())
+//    while(serialGSM_Terminal.available())
 //	{
-//        serialSIM800.read();
+//        serialGSM_Terminal.read();
 //    }
 //
 //    return 0;*/
 //}
 
-//void SIM800::sendEndMark(void)
+//void GSM_Terminal::sendEndMark(void)
 //{
-//    //serialSIM800.println((char)26);
+//    //serialGSM_Terminal.println((char)26);
 //}
 
 
