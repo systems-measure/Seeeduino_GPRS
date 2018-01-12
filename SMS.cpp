@@ -2,24 +2,23 @@
 
 
 
-SMS::SMS(GSM_Terminal *terminal)
+void SMS::initSms(GSM_Terminal *terminal)
 {
+	if (terminal == NULL) return;
 	gsmTerminal = terminal;
+
 	if (0 != gsmTerminal->sendCmdAndWaitForResp("AT+CMGF=1\r\n", "OK", GSM_RESP_DEFAULT_TIMEOUT))
 	{ // Set message mode to ASCII
 		fail = -1;
 	}
 
+	if (deleteAllMessage() < 0) fail = -1;
 }
-
-
-SMS::~SMS()
-{
-}
-
 
 int SMS::send(char *number, char *data)
 {
+	if (gsmTerminal == NULL) return -10;
+
 	char cmd[32];
 
 
@@ -37,29 +36,67 @@ int SMS::send(char *number, char *data)
 	return 0;
 }
 
+/*
+	@retval size of readed string on seccess
+			-1 of error
+*/
 int SMS::read(int messageIndex, char *message, int length)
 {
-	int i = 0;
-	char gprsBuffer[144]; // Buffer size for the SMS message
+	if (gsmTerminal == NULL) return -10;
 	char cmd[16];
-	char *p, *s;
 
+	memset(message, 0, length);
 
 	sprintf(cmd, "AT+CMGR=%d\r\n", messageIndex);
 	gsmTerminal->sendCmd(cmd);
 
-	/*    cleanBuffer(gprsBuffer,144);
-	readBuffer(gprsBuffer,144,DEFAULT_TIMEOUT);
+	int ret = gsmTerminal->getFieldFromAnswer("\r\n", "\r\n", message, length, 2, 30000);
+	return (ret >= 0) ? ret: -1;
+}
 
-	if(NULL != ( s = strstr(gprsBuffer,"+CMGR"))){
-	if(NULL != ( s = strstr(gprsBuffer,"REC"))){  // Search the beginning of the SMS message
-	p = s - 1;
-	while((i < length-1)) {
-	message[i++] = *(p++);
+int SMS::readAndDelete(char *message, int length)
+{
+	int ret = read(1, message, length);
+	if (ret <= 0) { return ret; }
+	deleteMessage(1);
+	return ret;
+}
+
+int SMS::deleteMessage(int messageIndex)
+{
+	if (gsmTerminal == NULL) return -10;
+	char cmd[16];
+	snprintf(cmd,sizeof(cmd),"AT+CMGD=%d\r\n", messageIndex);
+	return gsmTerminal->sendCmdAndWaitForResp(cmd, "OK");
+	
+}
+
+int SMS::deleteAllMessage()
+{
+	for (int i = 1; i < GSM_TERMINAL_MAX_SMS_INDEX; i++)
+	{
+		if (deleteMessage(i) < 0) return -1;
 	}
-	message[i] = '\0';
-	}
-	}*/
 	return 0;
+}
+
+int SMS::sendAndReadAnswer(char *number, char *request, char *responseBuf, int lenRespBuf, int tries)
+{
+	int ret;
+
+	ret = send(number, request);
+	if (ret < 0) return -1;
+
+	ret = 0;
+	while ((ret == 0) && (tries > 0))
+	{
+		Sleep(1000);
+		tries--;
+		ret = readAndDelete(responseBuf, lenRespBuf);
+		if (ret < 0) return -2;
+	}
+	if (tries <= 0) return -3;
+
+	return ret;
 }
 

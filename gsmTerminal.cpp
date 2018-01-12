@@ -38,7 +38,7 @@ int32_t GSM_Terminal::Receive(uint32_t timeout) {
 				count_pack = ((unsigned short)(*(rx_buff + 1) & 0x07) << 8 | (unsigned short)*(rx_buff + 2) & 0xFF) + 2;
 			}*/
 		} //while (/*(*(rx_buff + full_count - 1) != (char)(0x7E) || full_count < 10*/full_count != count_pack && resp_flg);
-		while ( (*(buffer + full_count - 1) != (char)(0x0A)) && (*(buffer + full_count - 1) != (char)(0x0D)) && resp_flg);
+		while ( (*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D)) && resp_flg);
 		return full_count;
 	
 	
@@ -95,6 +95,51 @@ int GSM_Terminal::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char 
 	}
 	return -1;
 }
+
+int GSM_Terminal::getFieldFromAnswer(char *startMark, char *endMark, char *outBuffer, int length, unsigned startMarkNumber,int timeout)
+{
+	char *dataStart, *dataEnd;
+	int startMark_length = strlen(startMark);
+	int endMark_length = strlen(endMark);
+	int dataLength;
+
+	cleanBuffer();
+
+	Receive(timeout);
+	//if (Receive(timeout) != 0) return -1;
+	dataStart = buffer;
+
+	
+	while (startMarkNumber)
+	{
+		dataStart = strstr(dataStart, startMark);
+		if (dataStart == NULL)
+		{
+			return -2;
+		}
+		dataStart += startMark_length;
+		startMarkNumber--;
+	}
+	
+
+	dataEnd = strstr(dataStart, endMark);
+	if (dataEnd == NULL)
+	{
+		return -3;
+	}
+	dataLength = dataEnd - dataStart;
+
+	if ((dataLength > length) || (dataLength < 0) 
+		|| (dataEnd >(buffer + GSM_BUFFER_SIZE)) || (dataStart > (buffer + GSM_BUFFER_SIZE)))
+	{
+		return -4;
+	}
+
+		 
+	memcpy(outBuffer, dataStart, dataLength);
+	return dataLength;
+}
+
 //int GSM_Terminal::sendATTest(void)
 //{
 //    //int ret = sendCmdAndWaitForResp("AT\r\n","OK", DEFAULT_TIMEOUT);
