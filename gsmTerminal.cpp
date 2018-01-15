@@ -12,8 +12,7 @@ GSM_Terminal::GSM_Terminal(int portNum, int baudRate)
 
 int32_t GSM_Terminal::Receive(uint32_t timeout) {
 	 
-		/*std::future<int32_t> f = std::async(std::launch::async, &SerialGate::Recv, com_port_, (char*)rx_buff, count_rx);
-		int32_t count_Rcv = f.get();*/
+
 		int full_count = 0;
 		int count_Rcv = 0;
 		bool resp_flg = true;
@@ -34,10 +33,8 @@ int32_t GSM_Terminal::Receive(uint32_t timeout) {
 			}
 			
 
-			/*if (full_count >= 3 && count_pack == -1) {
-				count_pack = ((unsigned short)(*(rx_buff + 1) & 0x07) << 8 | (unsigned short)*(rx_buff + 2) & 0xFF) + 2;
-			}*/
-		} //while (/*(*(rx_buff + full_count - 1) != (char)(0x7E) || full_count < 10*/full_count != count_pack && resp_flg);
+			
+		} 
 		while ( (*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D)) && resp_flg);
 		return full_count;
 	
@@ -51,10 +48,17 @@ void GSM_Terminal::cleanBuffer()
 }
 
 
-void GSM_Terminal::sendCmd(char* cmd)
+int GSM_Terminal::sendCmd(const char* cmd)
 {
 	unsigned int len = strlen(cmd);
-	com_port.Send(cmd, len);
+	if (len == NULL)
+	{
+		//consoleMessage("FAIL! \n", 1);
+		return -1;
+	}
+	char *send_cmd = new char[len];
+	memcpy((void*)send_cmd, (void*)cmd, len);
+	com_port.Send(send_cmd, len);
 }
 
 int GSM_Terminal::sendCmdAndWaitForResp(char * cmd, const char * resp, unsigned timeout, uint32_t tries)

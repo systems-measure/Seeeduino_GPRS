@@ -17,7 +17,7 @@ public:
 	/** send command to  GSM terminal 
 	*  @param cmd command array which will be send to GSM terminal, need '/0' in the end
 	*/
-	void sendCmd(char* cmd);
+	int sendCmd(const char* cmd);
 
 	/** send command to GSM terminal and wait for correct response
 	*  @param  *cmd     command which will be send to GSM terminal

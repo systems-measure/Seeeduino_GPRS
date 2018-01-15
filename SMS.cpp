@@ -15,12 +15,15 @@ void SMS::initSms(GSM_Terminal *terminal)
 	if (deleteAllMessage() < 0) fail = -1;
 }
 
-int SMS::send(char *number, char *data)
+int SMS::send(char *number, const char *data)
 {
-	if (gsmTerminal == NULL) return -10;
-
+	consoleMessage("Send ... ",1);
+	if (gsmTerminal == NULL)
+	{
+		consoleMessage("FAIL! \n", 1);
+		return -10;
+	}
 	char cmd[32];
-
 
 	snprintf(cmd, sizeof(cmd), "AT+CMGS=%s\r\n", number);
 	gsmTerminal->sendCmd(cmd);
@@ -31,8 +34,10 @@ int SMS::send(char *number, char *data)
 	Sleep(100);
 	if (0 != gsmTerminal->sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 50000))
 	{
+		consoleMessage("FAIL!\n",0);
 		return -1;
 	}
+	consoleMessage("OK\n",0);
 	return 0;
 }
 
