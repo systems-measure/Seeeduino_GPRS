@@ -2,7 +2,7 @@
 
 GSM::GSM(int portNum, int baudRate)
 {
-	gsmTerminal = new GSM_Terminal(portNum, baudRate);
-	sms.setTerminal(gsmTerminal);
-	fail = sms.getFailStatus();
+	com_port.Open(portNum, baudRate);
+	int ret = sms.setComPort(&com_port);
+	if (ret < 0) failInitStatus = true;
 }

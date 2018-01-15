@@ -10,9 +10,9 @@
 class GSM_Terminal
 {
 public:
-	GSM_Terminal(int portNum, int baudRate);
-	/*~GSM_Terminal() {  };*/
-
+	//GSM_Terminal(int portNum, int baudRate);
+	GSM_Terminal(SerialGate *com) { com_port = com; }
+	GSM_Terminal() {}
 
 	/** send command to  GSM terminal 
 	*  @param cmd command array which will be send to GSM terminal, need '/0' in the end
@@ -46,11 +46,18 @@ public:
 	*		-4 buffer index error
 	*/
 	int getFieldFromAnswer(char *startMark, char *endMark, char *outBuffer, int length, unsigned startMarkNumber, int timeout = GSM_RESP_DEFAULT_TIMEOUT);
-
+	
+	virtual inline int setComPort(SerialGate *com) { com_port = com; return 0; }
+protected:
+	bool consoleOutput = true;
+	virtual void consoleMessage(std::string text, bool newLine)
+	{
+		if (consoleOutput) { if (newLine) { std::cout << "GSM Terminal : "; } std::cout << text; }
+	}
 private:
 	void cleanBuffer();
 
-	SerialGate com_port;
+	SerialGate *com_port;
 	char buffer[GSM_BUFFER_SIZE];
 
 
@@ -62,3 +69,13 @@ private:
 	*/
 	int32_t Receive(uint32_t timeout);
 };
+
+#define GSM_TERMINAL_ERROR						-1
+#define GSM_TERMINAL_ERROR_INIT					-2
+#define GSM_TERMINAL_ERROR_INIT_TEXT			"FAIL INIT\n"
+#define GSM_TERMINAL_ERROR_PARAM				-3
+#define GSM_TERMINAL_ERROR_PARAM_TEXT			"FAIL PARAM\n"
+#define GSM_TERMINAL_ERROR_NO_ANSWER			-4
+#define GSM_TERMINAL_ERROR_NO_ANSWER_TEXT		"FAIL! NO ANSWER\n"
+#define GSM_TERMINAL_ERROR_TIMEOUT				-5
+#define GSM_TERMINAL_ERROR_INDEX_OUT_BUFFER		-6

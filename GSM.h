@@ -9,10 +9,10 @@ public:
 	GSM(int portNum, int baudRate);
 	~GSM() { }
 	SMS	sms;
-	inline int getFailStatus() { return fail; }
+	bool getFailInitStatus() { return failInitStatus; }
 private:
-	GSM_Terminal *gsmTerminal;
-	int fail = 0;
+	SerialGate com_port;
+	bool failInitStatus = false;
 };
 
 
