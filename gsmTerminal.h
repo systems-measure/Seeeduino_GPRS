@@ -27,8 +27,8 @@ public:
 	*      0 on success
 	*      -1 on error
 	*/
-	int sendCmdAndWaitForResp(char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1);
-	int sendCmdAndWaitForResp(char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1);
+	int sendCmdAndWaitForResp(const char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1);
+	int sendCmdAndWaitForResp(const char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1);
 	
 	
 	/* getting fields from answer. 
@@ -50,10 +50,12 @@ public:
 	virtual inline int setComPort(SerialGate *com) { com_port = com; return 0; }
 protected:
 	bool consoleOutput = true;
-	virtual void consoleMessage(std::string text, bool newLine)
+	virtual void consoleMessage(std::string text)
 	{
-		if (consoleOutput) { if (newLine) { std::cout << "GSM Terminal : "; } std::cout << text; }
+		if (consoleOutput) { std::cout << "GSM Terminal : "; std::cout << text; }
 	}
+	void consoleMessage_Ok() { std::cout << "OK\n"; }
+	void consoleMessage_Fail() { std::cout << "Fail\n"; }
 private:
 	void cleanBuffer();
 
@@ -72,10 +74,7 @@ private:
 
 #define GSM_TERMINAL_ERROR						-1
 #define GSM_TERMINAL_ERROR_INIT					-2
-#define GSM_TERMINAL_ERROR_INIT_TEXT			"FAIL INIT\n"
 #define GSM_TERMINAL_ERROR_PARAM				-3
-#define GSM_TERMINAL_ERROR_PARAM_TEXT			"FAIL PARAM\n"
 #define GSM_TERMINAL_ERROR_NO_ANSWER			-4
-#define GSM_TERMINAL_ERROR_NO_ANSWER_TEXT		"FAIL! NO ANSWER\n"
 #define GSM_TERMINAL_ERROR_TIMEOUT				-5
 #define GSM_TERMINAL_ERROR_INDEX_OUT_BUFFER		-6

@@ -172,3 +172,54 @@
 //	int GPRS::smsSetASKIImode();
 //};
 //#endif
+
+
+#include "gsmTerminal.h"
+typedef enum
+{
+	gprsConnectionType_CSD,
+	gprsConnectionType_GPRS0,
+	gprsConnectionType_NONE
+}gprsConnectionType_t;
+typedef struct
+{
+	gprsConnectionType_t conType;
+	std::string apn;
+	std::string userName;
+	std::string password;
+	std::string socket;
+}gprsParam_t;
+typedef enum
+{
+	gprsMode_CLIENT,
+	gprsMode_SERVER
+}gprsMode_t;
+typedef struct
+{
+	std::string serviceProfile;
+	std::string ip_adress;
+	std::string port;
+	gprsMode_t  mode;
+}gprsServiceParam_t;
+
+class GPRS : public GSM_Terminal
+{
+public:
+	GPRS(SerialGate *com) : GSM_Terminal(com) {}
+	GPRS() {}
+	~GPRS() { socketClose(); }
+	int initGPRS(gprsParam_t &gprsParam, gprsServiceParam_t &serviceParam);
+	int setSetupPorfile(gprsParam_t &gprsParam);
+	int setServiceProfile(gprsServiceParam_t &serviceParam);
+	void socketClose() { sendCmdAndWaitForResp(("AT^SISC=" + socket + "\r\n").c_str() , "OK"); }
+private:
+	std::string socket;
+	gprsServiceParam_t gprsService;
+
+	int sendParam(std::string cmd, std::string profileId, std::string param, std::string value);
+
+	void consoleMessage(std::string text)
+	{
+		if (consoleOutput) { std::cout << "GSM Terminal GPRS: ";  std::cout << text; }
+	}
+};

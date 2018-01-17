@@ -1,11 +1,11 @@
 #pragma once
 #include "gsmTerminal.h"
-#include <iostream>
+
 #define GSM_TERMINAL_MAX_SMS_INDEX		35
 class SMS: public GSM_Terminal
 {
 public:
-	SMS(SerialGate *com) : GSM_Terminal(com) {}
+	SMS(SerialGate *com) : GSM_Terminal(com) { initSms(); }
 	SMS() {} 
 	
 	int send(char *number,const char *data);
@@ -19,9 +19,9 @@ public:
 private:
 	int initSms();
 
-	void consoleMessage(std::string text, bool newLine)
+	void consoleMessage(std::string text)
 	{
-		if (consoleOutput) { if (newLine) { std::cout << "GSM Terminal SMS: "; } std::cout << text; }
+		if (consoleOutput) { std::cout << "GSM Terminal SMS: ";  std::cout << text; }
 	}
 	
 };

@@ -4,22 +4,22 @@
 
 int SMS::initSms()
 {
-	consoleMessage("init ... ", 1);
-	if (0 != sendCmdAndWaitForResp("AT+CMGF=1\r\n", "OK", GSM_RESP_DEFAULT_TIMEOUT)) goto __error;
+	consoleMessage("init ... ");
+	if (0 != sendCmdAndWaitForResp("AT+CMGF=1\r\n", "OK", GSM_RESP_DEFAULT_TIMEOUT)) goto __error; // Set message mode to ASCII
 	if (deleteAllMessage() < 0) goto __error;
-	consoleMessage("OK\n", 0);
+	consoleMessage_Ok();
 	return 0;
 
 __error:
-	{ // Set message mode to ASCII
-		consoleMessage(GSM_TERMINAL_ERROR_INIT_TEXT, 0);
+	{ 
+		consoleMessage_Fail();
 		return GSM_TERMINAL_ERROR_INIT;
 	}
 }
 
 int SMS::send(char *number, const char *data)
 {
-	consoleMessage("send ... ",1);
+	consoleMessage("send ... ");
 	char cmd[32];
 
 	snprintf(cmd, sizeof(cmd), "AT+CMGS=%s\r\n", number);
@@ -31,10 +31,10 @@ int SMS::send(char *number, const char *data)
 	Sleep(100);
 	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 50000))
 	{
-		consoleMessage(GSM_TERMINAL_ERROR_NO_ANSWER_TEXT,0);
+		consoleMessage("Fail! no answer");
 		return GSM_TERMINAL_ERROR_NO_ANSWER;
 	}
-	consoleMessage("OK\n",0);
+	consoleMessage_Ok();
 	return 0;
 }
 

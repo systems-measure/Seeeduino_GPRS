@@ -1,5 +1,3 @@
-
-
 #include "gsmTerminal.h"
 #include <ctime>
 
@@ -34,7 +32,6 @@ int32_t GSM_Terminal::Receive(uint32_t timeout)
 	
 }
 
-
 void GSM_Terminal::cleanBuffer()
 {
 	memset(buffer, '\0', sizeof(buffer));
@@ -46,17 +43,17 @@ int GSM_Terminal::sendCmd(const char* cmd)
 	unsigned int len = strlen(cmd);
 	if (len == NULL)
 	{
-		consoleMessage(GSM_TERMINAL_ERROR_PARAM_TEXT, 1);
 		return GSM_TERMINAL_ERROR_PARAM;
 	}
 	char *send_cmd = new char[len];
+	memset((void*)send_cmd, 0, len);
 	memcpy((void*)send_cmd, (void*)cmd, len);
 	int ret = com_port->Send(send_cmd, len);
-	delete send_cmd;
+	delete[] send_cmd;
 	return ret;
 }
 
-int GSM_Terminal::sendCmdAndWaitForResp(char * cmd, const char * resp, unsigned timeout, uint32_t tries)
+int GSM_Terminal::sendCmdAndWaitForResp(const char * cmd, const char * resp, unsigned timeout, uint32_t tries)
 {
 	unsigned tries_counter = 0;
 	while (tries_counter < tries)
@@ -74,7 +71,7 @@ int GSM_Terminal::sendCmdAndWaitForResp(char * cmd, const char * resp, unsigned 
 	}
 	return GSM_TERMINAL_ERROR_NO_ANSWER;
 }
-int GSM_Terminal::sendCmdAndWaitForResp(char* cmd, const char *resp1,const char *resp2, uint32_t timeout, unsigned tries)
+int GSM_Terminal::sendCmdAndWaitForResp(const char* cmd, const char *resp1,const char *resp2, uint32_t timeout, unsigned tries)
 {
 	unsigned tries_counter = 0;
 	while (tries_counter < tries)
@@ -125,7 +122,7 @@ int GSM_Terminal::getFieldFromAnswer(char *startMark, char *endMark, char *outBu
 	if (dataEnd == NULL)
 	{
 		return GSM_TERMINAL_ERROR_PARAM;
-	}
+	}  
 	dataLength = dataEnd - dataStart;
 
 	if ((dataLength > length) || (dataLength < 0) 
