@@ -15,6 +15,7 @@ __error:
 		consoleMessage_Fail();
 		return GSM_TERMINAL_ERROR_INIT;
 	}
+
 }
 
 int SMS::send(char *number, const char *data)

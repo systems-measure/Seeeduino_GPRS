@@ -6,6 +6,7 @@ GSM::GSM(int portNum, int baudRate)
 	com_port.Open(portNum, baudRate);
 
 	ret += sms.setComPort(&com_port);
+	ret += csd.setComPort(&com_port);
 	//ret += gprs.setComPort(&com_port);
 
 	if (ret < 0) failInitStatus = true;
