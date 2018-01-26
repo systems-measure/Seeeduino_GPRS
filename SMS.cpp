@@ -1,7 +1,21 @@
 #include "SMS.h"
 
 
-
+SMS::SMS(int com_num, BAUD_RATE baud)
+{
+	com_port = new SerialGate;
+	portOpen = com_port->Open(com_num, baud);
+	initSms();
+}
+SMS::~SMS()
+{
+	if ((portOpen) && (com_port != nullptr))
+	{
+		
+		com_port->Close();
+	}
+	
+}
 int SMS::initSms()
 {
 	consoleMessage("init ... ");
@@ -35,6 +49,7 @@ int SMS::send(char *number, const char *data)
 		consoleMessage("Fail! no answer");
 		return GSM_TERMINAL_ERROR_NO_ANSWER;
 	}
+	Sleep(GSM_TERMINAL_SMS_SEND_DELAY * 1000);
 	consoleMessage_Ok();
 	return 0;
 }
