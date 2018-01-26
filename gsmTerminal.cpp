@@ -38,18 +38,22 @@ void GSM_Terminal::cleanBuffer()
 }
 
 
-int GSM_Terminal::sendCmd(const char* cmd)
+int GSM_Terminal::send(const char* cmd)
 {
 	unsigned int len = strlen(cmd);
 	if (len == NULL)
 	{
 		return GSM_TERMINAL_ERROR_PARAM;
 	}
-	char *send_cmd = new char[len];
-	memset((void*)send_cmd, 0, len);
-	memcpy((void*)send_cmd, (void*)cmd, len);
-	int ret = com_port->Send(send_cmd, len);
-	delete[] send_cmd;
+	return send(cmd, len);
+}
+int GSM_Terminal::send(const char* data, int32_t size)
+{
+	char *send_data = new char[size];
+	memset((void*)send_data, 0, size);
+	memcpy((void*)send_data, (void*)data, size);
+	int ret = com_port->Send(send_data, size);
+	delete[] send_data;
 	return ret;
 }
 
@@ -60,7 +64,7 @@ int GSM_Terminal::sendCmdAndWaitForResp(const char * cmd, const char * resp, uns
 	{
 
 		cleanBuffer();
-		sendCmd(cmd);
+		send(cmd);
 		Receive(timeout);
 
 		if (strstr(buffer, resp) != NULL)
@@ -78,7 +82,7 @@ int GSM_Terminal::sendCmdAndWaitForResp(const char* cmd, const char *resp1,const
 	{
 
 		cleanBuffer();
-		sendCmd(cmd);
+		send(cmd);
 		Receive(timeout);
 		
 
