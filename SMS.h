@@ -2,12 +2,13 @@
 #include "gsmTerminal.h"
 
 #define GSM_TERMINAL_MAX_SMS_INDEX		35
+#define GSM_TERMINAL_SMS_SEND_DELAY		20 //[SEC]
 class SMS: public GSM_Terminal
 {
 public:
-	SMS(SerialGate *com) : GSM_Terminal(com) { initSms(); }
-	SMS() {} 
-	
+	SMS(int com_num, BAUD_RATE baud);
+	~SMS();
+
 	int send(char *number,const char *data);
 	int read(int messageIndex, char *message, int length);
 	int readAndDelete(char *message, int length);
@@ -18,6 +19,7 @@ public:
 	inline int setComPort(SerialGate *com) { GSM_Terminal::setComPort(com); return initSms(); }
 private:
 	int initSms();
+	bool portOpen = false;
 
 	void consoleMessage(std::string text)
 	{

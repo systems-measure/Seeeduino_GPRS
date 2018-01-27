@@ -4,7 +4,7 @@
 #include <future>
 
 
-#define GSM_RESP_DEFAULT_TIMEOUT    20000
+#define GSM_RESP_DEFAULT_TIMEOUT    40000
 #define GSM_BUFFER_SIZE				255
 
 class GSM_Terminal
@@ -57,10 +57,11 @@ protected:
 	}
 	void consoleMessage_Ok() { std::cout << "OK\n"; }
 	void consoleMessage_Fail() { std::cout << "Fail\n"; }
+	SerialGate *com_port;
 private:
 	void cleanBuffer();
-
-	SerialGate *com_port;
+	
+	
 	char buffer[GSM_BUFFER_SIZE];
 
 
