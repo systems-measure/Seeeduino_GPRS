@@ -38,11 +38,11 @@ int SMS::send(char *number, const char *data)
 	char cmd[32];
 
 	snprintf(cmd, sizeof(cmd), "AT+CMGS=%s\r\n", number);
-	sendCmd(cmd);
+	GSM_Terminal::send(cmd);
 	Sleep(500); //wait ack 
-
-	sendCmd(data);
-	sendCmd("\x1A"); //end Mark
+	
+	GSM_Terminal::send(data);
+	GSM_Terminal::send("\x1A"); //end Mark
 	Sleep(100);
 	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 50000))
 	{
@@ -64,7 +64,7 @@ int SMS::read(int messageIndex, char *message, int length)
 	memset(message, 0, length);
 
 	sprintf(cmd, "AT+CMGR=%d\r\n", messageIndex);
-	sendCmd(cmd);
+	GSM_Terminal::send(cmd);
 
 	int ret = getFieldFromAnswer("\r\n", "\r\n", message, length, 2, 30000);
 	return (ret >= 0) ? ret: -1;
