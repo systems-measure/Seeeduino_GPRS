@@ -1,8 +1,8 @@
 #pragma once
 
+#include "fwm-common\modules\Logger\Logger.h"
 #include "SerialGate.h"
 #include <future>
-
 
 #define GSM_RESP_DEFAULT_TIMEOUT    40000
 #define GSM_BUFFER_SIZE				255
@@ -11,8 +11,8 @@ class GSM_Terminal
 {
 public:
 	//GSM_Terminal(int portNum, int baudRate);
-	GSM_Terminal(SerialGate *com) { com_port = com; }
-	GSM_Terminal() {}
+    GSM_Terminal(SerialGate *com);
+    GSM_Terminal();
 
 	/** send command to  GSM terminal 
 	*  @param cmd command array which will be send to GSM terminal, need '/0' in the end
@@ -59,11 +59,11 @@ protected:
 	void consoleMessage_Fail() { std::cout << "Fail\n"; }
 	SerialGate *com_port;
 private:
+    Logger* cons_log_;
+
 	void cleanBuffer();
 	
-	
 	char buffer[GSM_BUFFER_SIZE];
-
 
 	/** read from GSM terminal and save to buffer array
 	*  @param  timeout 
