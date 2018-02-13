@@ -1,12 +1,15 @@
-#include "gsmTerminal.h"
 #include <ctime>
+#include <assert.h>
+#include "gsmTerminal.h"
 
-GSM_Terminal::GSM_Terminal() {
-    cons_log_ = new ConsoleLogger(-1, "GSM_Term"); 
+GSM_Terminal::GSM_Terminal(int com_number) {
+    cons_log_ = new ConsoleLogger(com_number, "GSM_Term");
 }
 GSM_Terminal::GSM_Terminal(SerialGate *com) {
+    assert(com != nullptr);
+
     com_port = com;
-    cons_log_ = new ConsoleLogger(-1, "GSM_Term");
+    cons_log_ = new ConsoleLogger(com->GetPort(), "GSM_Term");
 }
 
 int32_t GSM_Terminal::Receive(uint32_t timeout) 
@@ -33,7 +36,7 @@ int32_t GSM_Terminal::Receive(uint32_t timeout)
 		} 
 		while ( (*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D)) && resp_flg);
 
-        cons_log_->LogRx(buffer, full_count);
+        cons_log_->LogRxASCII(buffer, full_count);
 
 		return full_count;
 }
@@ -51,7 +54,6 @@ int GSM_Terminal::send(const char* cmd)
 	{
 		return GSM_TERMINAL_ERROR_PARAM;
 	}
-    cons_log_->LogTx(cmd, len);
 	return send(cmd, len);
 }
 int GSM_Terminal::send(const char* data, int32_t size)
@@ -60,7 +62,7 @@ int GSM_Terminal::send(const char* data, int32_t size)
 	memset((void*)send_data, 0, size);
 	memcpy((void*)send_data, (void*)data, size);
 
-    cons_log_->LogTx(send_data, size);
+    cons_log_->LogTxASCII(send_data, size);
 	int ret = com_port->Send(send_data, size);
 
 	delete[] send_data;

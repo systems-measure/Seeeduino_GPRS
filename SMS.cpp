@@ -1,7 +1,7 @@
 #include "SMS.h"
 
 
-SMS::SMS(int com_num, BAUD_RATE baud)
+SMS::SMS(int com_num, BAUD_RATE baud) : GSM_Terminal(com_num)
 {
 	com_port = new SerialGate;
 	portOpen = com_port->Open(com_num, baud);

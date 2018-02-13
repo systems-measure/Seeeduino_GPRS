@@ -1,7 +1,7 @@
 #pragma once
 
 #include "fwm-common\modules\Logger\Logger.h"
-#include "SerialGate.h"
+#include "SerialGate\SerialGate.h"
 #include <future>
 
 #define GSM_RESP_DEFAULT_TIMEOUT    40000
@@ -12,7 +12,7 @@ class GSM_Terminal
 public:
 	//GSM_Terminal(int portNum, int baudRate);
     GSM_Terminal(SerialGate *com);
-    GSM_Terminal();
+    GSM_Terminal(int com_number);
 
 	/** send command to  GSM terminal 
 	*  @param cmd command array which will be send to GSM terminal, need '/0' in the end
