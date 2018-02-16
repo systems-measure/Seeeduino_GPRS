@@ -63,7 +63,7 @@ int SMS::read(int messageIndex, char *message, int length)
 	char cmd[16];
 	memset(message, 0, length);
 
-	sprintf(cmd, "AT+CMGR=%d\r\n", messageIndex);
+	sprintf_s(cmd, "AT+CMGR=%d\r\n", messageIndex);
 	GSM_Terminal::send(cmd);
 
 	int ret = getFieldFromAnswer("\r\n", "\r\n", message, length, 2, 30000);
