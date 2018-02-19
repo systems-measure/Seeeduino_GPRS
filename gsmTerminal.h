@@ -28,8 +28,8 @@ public:
 	*      0 on success
 	*      -1 on error
 	*/
-	int sendCmdAndWaitForResp(const char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1);
-	int sendCmdAndWaitForResp(const char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1);
+	int sendCmdAndWaitForResp(const char* cmd, const char *resp, unsigned timeout = GSM_RESP_DEFAULT_TIMEOUT, uint32_t tries = 1, int tries_timeout = 0);
+	int sendCmdAndWaitForResp(const char* cmd, const char *resp1, const char *resp2, uint32_t timeout = GSM_RESP_DEFAULT_TIMEOUT, unsigned tries = 1, int tries_timeout = 0);
 	
 	
 	/* getting fields from answer. 

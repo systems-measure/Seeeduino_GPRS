@@ -1,6 +1,6 @@
 #pragma once
 #include "gsmTerminal.h"
-#include "LinkPrtcl.h"
+#include "fwm-common\modules\LinkInterface\LinkProtocol.h"
 
 #define GSM_TERMINAL_MAX_CSD_INDEX		35
 class CSD: public GSM_Terminal 

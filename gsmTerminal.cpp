@@ -69,7 +69,7 @@ int GSM_Terminal::send(const char* data, int32_t size)
 	return ret;
 }
 
-int GSM_Terminal::sendCmdAndWaitForResp(const char * cmd, const char * resp, unsigned timeout, uint32_t tries)
+int GSM_Terminal::sendCmdAndWaitForResp(const char * cmd, const char * resp, unsigned timeout, uint32_t tries, int tries_timeout)
 {
 	unsigned tries_counter = 0;
 	while (tries_counter < tries)
@@ -84,10 +84,11 @@ int GSM_Terminal::sendCmdAndWaitForResp(const char * cmd, const char * resp, uns
 			return 0;
 		}
 		tries_counter++;
+        Sleep(tries_timeout);
 	}
 	return GSM_TERMINAL_ERROR_NO_ANSWER;
 }
-int GSM_Terminal::sendCmdAndWaitForResp(const char* cmd, const char *resp1,const char *resp2, uint32_t timeout, unsigned tries)
+int GSM_Terminal::sendCmdAndWaitForResp(const char* cmd, const char *resp1,const char *resp2, uint32_t timeout, unsigned tries, int tries_timeout)
 {
 	unsigned tries_counter = 0;
 	while (tries_counter < tries)
@@ -102,6 +103,7 @@ int GSM_Terminal::sendCmdAndWaitForResp(const char* cmd, const char *resp1,const
 			return 0;
 		}
 		tries_counter++;
+        Sleep(tries_timeout);
 	}
 	return GSM_TERMINAL_ERROR_NO_ANSWER;
 }
