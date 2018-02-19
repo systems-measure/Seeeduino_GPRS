@@ -44,10 +44,10 @@ int SMS::send(char *number, const char *data)
 	GSM_Terminal::send(data);
 	GSM_Terminal::send("\x1A"); //end Mark
 	Sleep(100);
-	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 50000))
+	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 60))
 	{
 		consoleMessage("Fail! no answer");
-		return GSM_TERMINAL_ERROR_NO_ANSWER;
+        return GSM_TERMINAL_ERROR_NO_ANSWER;
 	}
 	Sleep(GSM_TERMINAL_SMS_SEND_DELAY * 1000);
 	consoleMessage_Ok();
@@ -66,7 +66,7 @@ int SMS::read(int messageIndex, char *message, int length)
 	sprintf_s(cmd, "AT+CMGR=%d\r\n", messageIndex);
 	GSM_Terminal::send(cmd);
 
-	int ret = getFieldFromAnswer("\r\n", "\r\n", message, length, 2, 30000);
+	int ret = getFieldFromAnswer("\r\n", "\r\n", message, length, 2, 30);
 	return (ret >= 0) ? ret: -1;
 }
 
