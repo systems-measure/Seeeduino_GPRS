@@ -4,7 +4,7 @@
 #include "SerialGate\SerialGate.h"
 #include <future>
 
-#define GSM_RESP_DEFAULT_TIMEOUT    40000
+#define GSM_RESP_DEFAULT_TIMEOUT    40      ///< sec
 #define GSM_BUFFER_SIZE				255
 
 class GSM_Terminal
