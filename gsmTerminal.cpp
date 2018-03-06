@@ -12,6 +12,17 @@ GSM_Terminal::GSM_Terminal(SerialGate *com) {
     cons_log_ = new ConsoleLogger(com->GetPort(), "GSM_Term");
 }
 
+GSM_Terminal::~GSM_Terminal() {
+	if (com_port != nullptr) {
+		delete com_port;
+		com_port = nullptr;
+	}
+	if (cons_log_ != nullptr) {
+		delete cons_log_;
+		cons_log_ = nullptr;
+	}
+}
+
 int32_t GSM_Terminal::Receive(uint32_t timeout) 
 {
 

@@ -7,15 +7,11 @@ SMS::SMS(int com_num, BAUD_RATE baud) : GSM_Terminal(com_num)
 	portOpen = com_port->Open(com_num, baud);
 	initSms();
 }
+
 SMS::~SMS()
-{
-	if ((portOpen) && (com_port != nullptr))
-	{
-		
-		com_port->Close();
-	}
-	
+{	
 }
+
 int SMS::initSms()
 {
 	consoleMessage("init ... ");

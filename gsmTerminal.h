@@ -13,6 +13,7 @@ public:
 	//GSM_Terminal(int portNum, int baudRate);
     GSM_Terminal(SerialGate *com);
     GSM_Terminal(int com_number);
+	virtual ~GSM_Terminal();
 
 	/** send command to  GSM terminal 
 	*  @param cmd command array which will be send to GSM terminal, need '/0' in the end
