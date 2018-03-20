@@ -1,10 +1,12 @@
 #include "SMS.h"
 
-
 SMS::SMS(int com_num, BAUD_RATE baud) : GSM_Terminal(com_num)
 {
 	com_port = new SerialGate;
-	portOpen = com_port->Open(com_num, baud);
+    if (!(portOpen = com_port->Open(com_num, baud))) {
+        throw std::exception("ERROR! SMS::SMS - COM port not Opened.");
+    }
+    
 	initSms();
 }
 
@@ -40,13 +42,11 @@ int SMS::send(char *number, const char *data)
 	GSM_Terminal::send(data);
 	GSM_Terminal::send("\x1A"); //end Mark
 	Sleep(100);
-	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 60))
+	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 1, 3 * 60))
 	{
 		consoleMessage("Fail! no answer");
         return GSM_TERMINAL_ERROR_NO_ANSWER;
 	}
-	Sleep(GSM_TERMINAL_SMS_SEND_DELAY * 1000);
-	consoleMessage_Ok();
 	return 0;
 }
 

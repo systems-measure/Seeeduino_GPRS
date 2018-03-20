@@ -42,6 +42,7 @@ int32_t GSM_Terminal::Receive(uint32_t timeout)
 				if ((clock() - start_rcv) > timeout * CLOCKS_PER_SEC) 
 				{
 					resp_flg = false;
+                    cons_log_->LogOut("Response timeout.");
 				}
 			}
 		} 
