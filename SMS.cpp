@@ -42,7 +42,7 @@ int SMS::send(char *number, const char *data)
 	GSM_Terminal::send(data);
 	GSM_Terminal::send("\x1A"); //end Mark
 	Sleep(100);
-	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 1, 3 * 60))
+	if (0 != sendCmdAndWaitForResp("\r\n", "+CMGS: ", "OK", 3 * 60))
 	{
 		consoleMessage("Fail! no answer");
         return GSM_TERMINAL_ERROR_NO_ANSWER;

@@ -23,30 +23,36 @@ GSM_Terminal::~GSM_Terminal() {
 	}
 }
 
-int32_t GSM_Terminal::Receive(uint32_t timeout) 
+int32_t GSM_Terminal::Receive(uint32_t timeout, const char *resp1, const char *resp2)
 {
 
 		int full_count = 0;
 		int count_Rcv = 0;
-		bool resp_flg = true;
+		bool resp_flg = true, fCheckTimeOut;
 
 		clock_t start_rcv = clock();
 		short count_pack = -1;
 		do {
+            fCheckTimeOut = false;
 			std::future<int> f = std::async(std::launch::async, &SerialGate::Recv, com_port, (char*)(buffer + full_count), sizeof(buffer));
 			count_Rcv = f.get();
 		
 			full_count += count_Rcv;
-			if (full_count == 0) 
+            // -- Check TimeOut
+            if ((resp1) && (resp2)) fCheckTimeOut = !strstr(buffer, resp1) || !strstr(buffer, resp2);
+            else if (resp1) fCheckTimeOut = !strstr(buffer, resp1);
+            else fCheckTimeOut = (full_count == 0);
+
+			if (fCheckTimeOut)
 			{
-				if ((clock() - start_rcv) > timeout * CLOCKS_PER_SEC) 
-				{
-					resp_flg = false;
+                if ((clock() - start_rcv) > timeout * CLOCKS_PER_SEC)
+                {
+                    resp_flg = false;
                     cons_log_->LogOut("Response timeout.");
-				}
+                }
 			}
 		} 
-		while ( (*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D)) && resp_flg);
+		while (fCheckTimeOut || ((*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D))) && resp_flg);
 
         cons_log_->LogRxASCII(buffer, full_count);
 
@@ -89,7 +95,7 @@ int GSM_Terminal::sendCmdAndWaitForResp(const char * cmd, const char * resp, uns
 
 		cleanBuffer();
 		send(cmd);
-		Receive(timeout);
+		Receive(timeout, resp);
 
 		if (strstr(buffer, resp) != NULL)
 		{
@@ -108,13 +114,12 @@ int GSM_Terminal::sendCmdAndWaitForResp(const char* cmd, const char *resp1,const
 
 		cleanBuffer();
 		send(cmd);
-		Receive(timeout);
-
-		if ((strstr(buffer, resp1) != NULL) && (strstr(buffer, resp2) != NULL))
-		{
-			return 0;
-		}
-		tries_counter++;
+		Receive(timeout, resp1, resp2);
+        if ((strstr(buffer, resp1) != NULL) && (strstr(buffer, resp2) != NULL))
+        {
+            return 0;
+        }
+        tries_counter++;
         Sleep(tries_timeout);
 	}
 	return GSM_TERMINAL_ERROR_NO_ANSWER;

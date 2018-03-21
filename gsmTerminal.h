@@ -5,7 +5,7 @@
 #include <future>
 
 #define GSM_RESP_DEFAULT_TIMEOUT    40      ///< sec
-#define GSM_BUFFER_SIZE				255
+#define GSM_BUFFER_SIZE				300
 
 class GSM_Terminal
 {
@@ -72,7 +72,7 @@ private:
 	*      0 on success
 	*      -1 on error
 	*/
-	int32_t Receive(uint32_t timeout);
+	int32_t Receive(uint32_t timeout, const char *resp1 = nullptr, const char *resp2 = nullptr);
 };
 
 #define GSM_TERMINAL_ERROR						-1
