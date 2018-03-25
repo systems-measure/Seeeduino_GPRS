@@ -52,7 +52,7 @@ int32_t GSM_Terminal::Receive(uint32_t timeout, const char *resp1, const char *r
                 }
 			}
 		} 
-		while (fCheckTimeOut || ((*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D))) && resp_flg);
+		while ((fCheckTimeOut || ((*(buffer + full_count-1) != (char)(0x0A)) && (*(buffer + full_count - 2) != (char)(0x0D)))) && resp_flg);
 
         cons_log_->LogRxASCII(buffer, full_count);
 
