@@ -10,10 +10,6 @@ SMS::SMS(int com_num, BAUD_RATE baud) : GSM_Terminal(com_num)
 	initSms();
 }
 
-SMS::~SMS()
-{	
-}
-
 int SMS::initSms()
 {
 	consoleMessage("init ... ");

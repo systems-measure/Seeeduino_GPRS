@@ -7,7 +7,7 @@ class SMS: public GSM_Terminal
 {
 public:
 	SMS(int com_num, BAUD_RATE baud);
-	~SMS();
+    ~SMS() { if(com_port) delete com_port; }
 
 	int send(char *number,const char *data);
 	int read(int messageIndex, char *message, int length);

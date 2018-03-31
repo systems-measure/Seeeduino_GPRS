@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "gsmTerminal.h"
 
-GSM_Terminal::GSM_Terminal(int com_number) {
+GSM_Terminal::GSM_Terminal(int com_number) : com_port(nullptr) {
     cons_log_ = new ConsoleLogger(com_number, "GSM_Term");
 }
 GSM_Terminal::GSM_Terminal(SerialGate *com) {
@@ -13,10 +13,6 @@ GSM_Terminal::GSM_Terminal(SerialGate *com) {
 }
 
 GSM_Terminal::~GSM_Terminal() {
-	if (com_port != nullptr) {
-		delete com_port;
-		com_port = nullptr;
-	}
 	if (cons_log_ != nullptr) {
 		delete cons_log_;
 		cons_log_ = nullptr;
