@@ -12,7 +12,7 @@ public:
 	int send(char *number,const char *data);
 	int read(int messageIndex, char *message, int length);
 	int readAndDelete(char *message, int length);
-	int sendAndReadAnswer(char *number, char *request, char *responseBuf, int lenRespBuf, int tries = 100);
+	int sendAndReadAnswer(char *number, const char *request, char *responseBuf, int lenRespBuf, int tries = 100);
 	int deleteMessage(int messageIndex);
 	int deleteAllMessage();
 

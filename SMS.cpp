@@ -87,7 +87,7 @@ int SMS::deleteAllMessage()
 	return 0;
 }
 
-int SMS::sendAndReadAnswer(char *number, char *request, char *responseBuf, int lenRespBuf, int tries)
+int SMS::sendAndReadAnswer(char *number, const char *request, char *responseBuf, int lenRespBuf, int tries)
 {
 	int ret;
 
